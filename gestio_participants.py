@@ -1,5 +1,5 @@
 # Importamos el modulo que nos permite trabajar con fechas
-import datetime
+import datetime, os, shutil
 
 # Modul per gestionar participants
 SAVES_DIR = 'saves'
@@ -21,8 +21,9 @@ def desar_participants_a_fitxer(participants):
     nombreFichero = datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S") + ".txt"
     filePath = SAVES_DIR + '/' + nombreFichero
     try:
-        with open(filePath, 'w') as f:
+        with open(filePath, 'a') as f:
             f.write("\n".join(participants))
+            f.write('\n')
         return nombreFichero
     except:
         return False
@@ -42,3 +43,11 @@ def carregar_participants_de_fitxer(fitxer=FICHERO_PARTICIPANTES):
 # Eliminar participantes
 def eliminarParticipantes():
     open(FICHERO_PARTICIPANTES, "w").close()
+
+# Obtener nombres ficheros torneos guardados
+def obtenerSaves():
+    return os.listdir(SAVES_DIR)
+
+# Funcion que sobrescribe el contenido de los jugadores actuales con el del fichero dado
+def cargarParticipantes(filename):
+    shutil.copyfile(f'saves/{filename}', FICHERO_PARTICIPANTES)

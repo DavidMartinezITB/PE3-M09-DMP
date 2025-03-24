@@ -15,3 +15,12 @@ def validName(name):
     return True
   else:
     return False
+
+def validarNombreFichero(nombre):
+  # Expresión regular para validar el formato "dia-mes-año_hora-minuto-segundo.txt"
+  PATRON_ARCHIVO = re.compile(r"^\d{2}-\d{2}-\d{4}_\d{2}-\d{2}-\d{2}\.txt$")
+
+  if not PATRON_ARCHIVO.match(nombre):
+        return False  # No cumple con el formato esperado
+  else:
+     return True
