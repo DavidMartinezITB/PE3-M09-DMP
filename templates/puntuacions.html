@@ -4,7 +4,20 @@
     <title>Puntuacions</title>
 </head>
 <body>
-    <h1>Puntuacions</h1>
-    <!-- TODO: Mostrar rànquing i puntuacions actuals -->
+    {% if puntuaciones %}
+        <h1>Ranking</h1>
+        {% for k, v in puntuaciones.items() | sort(reverse=true, attribute='1') %}
+            {% if v != 0 %}
+                <li>{{k}} - {{ v }}</li>
+            {% endif %}
+        {% endfor %}
+
+        <h1>Puntuacions</h1>
+        {% for k, v in puntuaciones.items() %}
+            <li>{{k}} - {{ v }}</li>
+        {% endfor %}
+    {% else %}
+        <h1>Sin entradas que mostrar!</h1>
+    {% endif %}
 </body>
 </html>

@@ -5,6 +5,47 @@
 </head>
 <body>
     <h1>Partides</h1>
-    <!-- TODO: Mostrar llista de partides i permetre avançar jornades -->
+    <form method="GET" action="/partides/generarcalendario">
+        <p>Generar partidas (si se han actualizado los participantes) <button type="submit">Generar partidas</button></p>        
+    </form>
+
+    <form method="GET" action="/partides/cargarcalendario">
+        <p>Cargar partidas de un fichero <button type="submit">Cargar partidas</button></p>
+    </form>
+    {% if calendario %}
+        <form method="GET" action="/partides/jugarmanual">
+            <label for="archivo">Que partida quieres jugar?</label>
+            <select name="partida" id="archivo">
+                {% for partida in calendario %}
+                <option value="{{ loop.index - 1 }}">{{ loop.index - 1 }} - {{ partida[0] }} vs {{partida[1]}}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Jugar</button>    
+        </form>
+
+        
+        {% if partidaJugar or partidaJugar == 0 %}
+            <p>{{ calendario[partidaJugar][0] }} vs {{calendario[partidaJugar][1] }}</p>
+            <form method="POST" action="/partides/ganador">
+                <label for="ganador">Quien gana?</label>
+                <select name="ganador" id="ganador">
+                    {% for jugador in calendario[partidaJugar] %}
+                    <option value="{{ jugador }}">{{ jugador }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Escoger ganador!</button>    
+            </form>
+        {% endif %}
+            
+        {% if ganador %}
+            <p>El ganador es {{ ganador }}, con {{ veces }} puntos</p>
+        {% endif %}
+        
+        <br>
+        <h3>Partidas disponibles:</h3>
+        {% for partida in calendario %}
+            <li>{{ loop.index - 1 }} - {{ partida[0] }} vs {{ partida[1] }}</li>
+        {% endfor %}
+    {% endif %}
 </body>
 </html>

@@ -1,7 +1,9 @@
 # Funcions auxiliars
 
 # Importamos el modulo que nos permite trabajar con expresiones regulares
-import re
+import re, csv
+
+FICHERO_ESTADISTICAS = 'estadisticas.txt'
 
 # Validacion de entrada con expresiones regulares
 

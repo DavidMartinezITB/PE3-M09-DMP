@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from utils import validName, validarNombreFichero
 from gestio_participants import carregar_participants_de_fitxer, afegir_participant, desar_participants_a_fitxer, eliminarParticipantes, obtenerSaves, cargarParticipantes
 import gestio_partides
+import puntuacions
 
 # Inicialització de l'aplicació Flask
 app = Flask(__name__)
@@ -35,10 +36,6 @@ def reqParticipantes():
             return '<h1>ERROR AL CARGAR PARTICIPANTE</h1>'
         # Si la funcion no falla, ha guardado bien el fichero, por lo que volvemos a cargar pro GET
         return redirect('/participants')
-
-@app.route('/puntuacions')
-def puntuaciones():
-    return render_template('puntuacions.html')
 
 @app.route('/ranking')
 def ranking():
@@ -76,10 +73,44 @@ def loadP():
 
 @app.route('/partides')
 def partidas():
-    gestio_partides.generar_partides(carregar_participants_de_fitxer())
     return render_template('partides.html')
 
+@app.route('/partides/generarcalendario')
+def generarCalendarioGET():
+    return render_template('partides.html', calendario=gestio_partides.generarCalendario(carregar_participants_de_fitxer()))
 
+@app.route('/partides/cargarcalendario')
+def obtenerCalendarioGET():
+    return render_template('partides.html', calendario=gestio_partides.carregar_partides_de_fitxer())
+
+@app.route('/partides/jugarmanual')
+def jugarManualGET():
+    try:
+        partida = int(request.args['partida'])
+    except:
+        return 'ERROR: LA PARTIDA SE EXPRESA DE FORMA NUMERICA'
+    return render_template('partides.html', partidaJugar=partida, calendario=gestio_partides.generarCalendario(carregar_participants_de_fitxer()))
+
+@app.route('/partides/ganador', methods=['POST'])
+def ganadorPost():
+    ganador = request.form.get('ganador')
+    if not (ganador in carregar_participants_de_fitxer()):
+        return 'GANADOR NO VALIDO!'
+    if gestio_partides.guardarEntradaGanar(ganador):
+        veces = puntuacions.obtenerVecesGanado(ganador)
+        return render_template('partides.html', calendario=gestio_partides.carregar_partides_de_fitxer(), ganador=ganador, veces=veces)
+    return ganador
+
+
+###
+### PUNTUACIONES Y RANKING
+###
+
+@app.route('/puntuacions')
+def puntuacionesGET():
+    puntuaciones = puntuacions.obtenerPuntuaciones()
+    print(puntuaciones)
+    return render_template('puntuacions.html', puntuaciones=puntuaciones)
 
 # Iniciailzacion
 if __name__ == '__main__':
